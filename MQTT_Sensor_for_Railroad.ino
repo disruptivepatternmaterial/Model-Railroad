@@ -42,7 +42,7 @@ String configTopic = "trains/sensors/ESP/" + WiFi.macAddress();
 
 EspMQTTClient client(
   "Mer de Glace IoT",      // ssid
-  "pencilhill",            // password
+  "",            // password
   "192.168.20.78",         // MQTT ip
   1883,                    // MQTT broker port
   "",                      // MQTT username
