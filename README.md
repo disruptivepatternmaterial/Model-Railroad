@@ -15,3 +15,7 @@ Then on trains/sensors/ESP/84:F3:EB:0D:26:0F I push a JSON of {"type":"sensor","
 I am going to test this debouncing style for a while and see what happens.
 
 Remeber, you can pass in changes to this once the sensor is deployed using correct topic and JSON mentioned above. I have a sense that IR sensors low and on curves will have a lot of noise...I also dont need to count the cars, which if you got "crazy" you might be able to do by counting the offs before the final offs, then subtracting the bounce #. Not sure where you'd put that into JMRI and what you'd do with it, but maybe you could define a train as having 5 cars and wait for all 5 to go by before declaring a block change complete. I am not that advanced yet!
+
+Nod RED Flow
+
+![node red image](/MQTT_Sensor_for_Railroad/node-red-layout.png)
