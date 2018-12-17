@@ -25,6 +25,7 @@
 
 #include <EspMQTTClient.h>
 #include <ArduinoJson.h>
+#include "WiFi_Info.h"
 
 String payload = "";
 int lastreading = 0;
@@ -41,8 +42,8 @@ String configTopic = "trains/sensors/ESP/" + WiFi.macAddress();
 
 
 EspMQTTClient client(
-  "",      // ssid
-  "",            // password
+  wifi_ssid,      // ssid
+  wifi_pass,            // password
   "192.168.20.78",         // MQTT ip
   1883,                    // MQTT broker port
   "",                      // MQTT username
@@ -73,10 +74,10 @@ void onConnectionEstablished()
 
     JsonObject& root = jsonBuffer.parseObject(payload);
     
-    const String type = root["type"]; // "sensor"
-    const String mac = root["mac"]; // "adfads"
-    //loopDelay = root["delay"]; // 444
-    const char* bounce = root["bounce"]; // "asdfad"
+    const String type = root["type"];
+    const String mac = root["mac"]; 
+    //loopDelay = root["delay"]; 
+    const String bounce = root["bounce"];
 
     if (mac == WiFi.macAddress() & type == "sensor") {
       loopDelay = root["delay"];
