@@ -1,5 +1,6 @@
 # Model-Railroad
 
+I put this together on a Sunday morning...so it is rough. But I will work to refine it and put update with an explaintion so people can find it more useful.
 
 MQTT_Sensor_for_Railroad.ino = ESP8266 code that puts messages on MQTT of the state of sensors, in my case IR detectors. It also takes in a JSON messages to change the config. There are various ideas on this as to how to make it more auto-config, but my idea is to make it so that the EXACT same piece of code can run on multiples ESPs and I dont have to change the code.
 
@@ -19,6 +20,7 @@ Remeber, you can pass in changes to this once the sensor is deployed using corre
 Nod RED Flow
 
 1 - take in the MQTT, check that it is formed right, then change on/off to 4/2 for JMRI, post to websocket.
+
 2 - a ping messages is sent every 13 seconds to keep the websocket open.
 
 ![node red image](/MQTT_Sensor_for_Railroad/node-red-layout.png)
