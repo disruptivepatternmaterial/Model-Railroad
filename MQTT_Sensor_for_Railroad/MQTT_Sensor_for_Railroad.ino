@@ -34,8 +34,10 @@ String sensorPrefixJSON = "{\"type\":\"sensor\",\"data\":{\"name\":\"";
 String sensorInFixJSON = "\",\"state\":\"";
 String sensorSuffixJSON = "\"}}";
 int usablePins[] = {14};
-int debouncePins[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+//so I have all these complex ideas on how to track the bounces, and in the end I realized I should just make an array...it should have all the position = to the number of pins
+int debouncePins[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1};
 int loopDelay = 250;
+//this is the topic for the inbound config changes
 String configTopic = "trains/sensors/ESP/" + WiFi.macAddress();
 int bounce = 4;
 
