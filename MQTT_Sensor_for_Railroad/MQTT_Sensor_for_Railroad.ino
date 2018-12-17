@@ -14,7 +14,6 @@
 
    Adafruit Feather HUZZAH ESP8266 pins: #0, #2, #4, #5, #12, #13, #14, #15, #16
    {"type":"sensor","data":{"name":"IS2","state":4}}
-   {"type":"sensor","data":{"name":"IS2","state":4}}
 
    this is designed to run every loopDelay ms and report all the sensors on pins in usablePins[]
    I have thought that I should only report changes, but it seems to be more reliable to report all and often, I need to think about this
@@ -35,15 +34,16 @@ String sensorPrefixJSON = "{\"type\":\"sensor\",\"data\":{\"name\":\"";
 String sensorInFixJSON = "\",\"state\":";
 String sensorSuffixJSON = "}}";
 int usablePins[] = {14};
-int debouncePins[] = {};
+int debouncePins[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 int loopDelay = 250;
 String configTopic = "trains/sensors/ESP/" + WiFi.macAddress();
+int bounce = 4;
 
 
 
 EspMQTTClient client(
-  wifi_ssid,      // ssid
-  wifi_pass,            // password
+  wifi_ssid,               // ssid
+  wifi_pass,               // password
   "192.168.20.78",         // MQTT ip
   1883,                    // MQTT broker port
   "",                      // MQTT username
@@ -57,6 +57,7 @@ EspMQTTClient client(
 void setup()
 {
   Serial.begin(115200);
+  delay(1000);
 }
 
 
@@ -66,23 +67,22 @@ void onConnectionEstablished()
   {
     Serial.println("payload " + payload);
     //loopDelay = payload.toInt();
-    
+
     const size_t bufferSize = JSON_OBJECT_SIZE(4) + 60;
     DynamicJsonBuffer jsonBuffer(bufferSize);
 
-    //const char* json = "{\"type\":\"sensor\",\"mac\":\"adfads\",\"delay\":444,\"bounce\":\"asdfad\"}";
+    //const char* json = "{\"type\":\"sensor\",\"mac\":\"84:F3:EB:0F:26:DD\",\"delay\":500,\"bounce\":\"3\"}";
 
     JsonObject& root = jsonBuffer.parseObject(payload);
-    
+
     const String type = root["type"];
-    const String mac = root["mac"]; 
-    //loopDelay = root["delay"]; 
-    const String bounce = root["bounce"];
+    const String mac = root["mac"];
 
     if (mac == WiFi.macAddress() & type == "sensor") {
       loopDelay = root["delay"];
+      bounce = root["bounce"];
     }
-    
+
   });
 }
 
@@ -94,12 +94,22 @@ void loop()
     int pinToUse = usablePins[x];
     int reading = digitalRead(pinToUse);
     String topic = topicPrefix + WiFi.macAddress() + "/" + pinToUse;
+    Serial.println(debouncePins[pinToUse]);
     if (reading == 1) {
-      String publishJSON = sensorPrefixJSON + WiFi.macAddress() + "." + pinToUse + sensorInFixJSON + "OFF" + sensorSuffixJSON;
-      client.publish(topic, publishJSON);
+      if (debouncePins[pinToUse] == 1) {
+        String publishJSON = sensorPrefixJSON + WiFi.macAddress() + "." + pinToUse + sensorInFixJSON + "OFF" + sensorSuffixJSON;
+        client.publish(topic, publishJSON);
+        debouncePins[pinToUse] = 0;
+      }
+      if (debouncePins[pinToUse] > 0) {
+        debouncePins[pinToUse] = debouncePins[pinToUse] - 1;
+      }
     } else if (reading == 0) {
       String publishJSON = sensorPrefixJSON + WiFi.macAddress() + "." + pinToUse + sensorInFixJSON + "ON" + sensorSuffixJSON;
       client.publish(topic, publishJSON);
+      if (debouncePins[pinToUse] <= bounce) {
+        debouncePins[pinToUse] = bounce;
+      }
     }
   }
   delay(loopDelay);
