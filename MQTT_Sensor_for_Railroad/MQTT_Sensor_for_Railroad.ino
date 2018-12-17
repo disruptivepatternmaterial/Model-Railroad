@@ -1,25 +1,16 @@
 /*
    Nathan end of 2018
-   Idea is to make code that can be pushed to any esp 2886
-   that auto forms a sensor net for model rail
-   the first part is not done:
-   have a zero conf mqtt config q that the devices get their infor from to have them act normal
-   instead I am just hard coding it all
-
-   other todos
-   some kind of debouncing - not realy debouncing, but I have not yet though about how I want the fliping of state to handled
-   as of right now these messages are managed by node-red and then go into JMRI since JMRI doenst have a uniform interface
-   ead the device type and make a list of input pins (the idea is to make this thing super automatic) right now I am just hard coding them
-
 
    Adafruit Feather HUZZAH ESP8266 pins: #0, #2, #4, #5, #12, #13, #14, #15, #16
    {"type":"sensor","data":{"name":"IS2","state":4}}
 
-   this is designed to run every loopDelay ms and report all the sensors on pins in usablePins[]
-   I have thought that I should only report changes, but it seems to be more reliable to report all and often, I need to think about this
-   which is why debouncePins is there - starting to think through how I only report changes.
-   and a third idea is an API to request a read using the q this thing is susbribed to they way I can control the polling from node red
-*/
+   bounce = # of loops to skip before reporting an ON moving to OFF
+  
+  this might not really be needed since JMRI can do this.
+  
+  I'm not sure if this is just to chatty, if it is, change the loop time in the code or via an MQTT msg
+  
+   */
 
 
 #include <EspMQTTClient.h>
