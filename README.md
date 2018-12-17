@@ -18,4 +18,7 @@ Remeber, you can pass in changes to this once the sensor is deployed using corre
 
 Nod RED Flow
 
+1 - take in the MQTT, check that it is formed right, then change on/off to 4/2 for JMRI, post to websocket.
+2 - a ping messages is sent every 13 seconds to keep the websocket open.
+
 ![node red image](/MQTT_Sensor_for_Railroad/node-red-layout.png)
