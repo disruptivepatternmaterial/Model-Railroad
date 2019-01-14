@@ -5,12 +5,12 @@
    {"type":"sensor","data":{"name":"IS2","state":4}}
 
    bounce = # of loops to skip before reporting an ON moving to OFF
-  
+
   this might not really be needed since JMRI can do this.
-  
+
   I'm not sure if this is just to chatty, if it is, change the loop time in the code or via an MQTT msg
-  
-   */
+
+*/
 
 
 #include <EspMQTTClient.h>
@@ -24,12 +24,13 @@ void onConnectionEstablished();
 String sensorPrefixJSON = "{\"type\":\"sensor\",\"data\":{\"name\":\"";
 String sensorInFixJSON = "\",\"state\":\"";
 String sensorSuffixJSON = "\"}}";
-int usablePins[] = {14};
+int usablePins[] = {14, 12, 13, 4, 5, 2};
 //so I have all these complex ideas on how to track the bounces, and in the end I realized I should just make an array...it should have all the position = to the number of pins
-int debouncePins[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1};
+int debouncePins[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 int loopDelay = 250;
 //this is the topic for the inbound config changes
 String configTopic = "trains/sensors/ESP/" + WiFi.macAddress();
+String topic = "trains/sensors/ESP";
 int bounce = 4;
 
 
@@ -37,7 +38,7 @@ int bounce = 4;
 EspMQTTClient client(
   wifi_ssid,               // ssid
   wifi_pass,               // password
-  "192.168.20.78",         // MQTT ip
+  "Punxbergbahn-Infrastruktur.punxbergbahn.lan",         // MQTT ip
   1883,                    // MQTT broker port
   "",                      // MQTT username
   "",                      // MQTT password
@@ -56,6 +57,8 @@ void setup()
 
 void onConnectionEstablished()
 {
+  String publishJSON = sensorPrefixJSON + WiFi.macAddress() + sensorInFixJSON + "" + sensorSuffixJSON;
+  client.publish(topic, publishJSON);
   client.subscribe(configTopic, [] (const String & payload)
   {
     Serial.println("payload " + payload);
@@ -74,6 +77,7 @@ void onConnectionEstablished()
     if (mac == WiFi.macAddress() & type == "sensor") {
       loopDelay = root["delay"];
       bounce = root["bounce"];
+      Serial.println("MESSAGE PROCESSED");
     }
 
   });
@@ -87,7 +91,7 @@ void loop()
     int pinToUse = usablePins[x];
     int reading = digitalRead(pinToUse);
     String topic = topicPrefix + WiFi.macAddress() + "/" + pinToUse;
-    Serial.println(debouncePins[pinToUse]);
+    //Serial.println(debouncePins[pinToUse]);
     if (reading == 1) {
       if (debouncePins[pinToUse] == 1) {
         String publishJSON = sensorPrefixJSON + WiFi.macAddress() + "." + pinToUse + sensorInFixJSON + "OFF" + sensorSuffixJSON;
