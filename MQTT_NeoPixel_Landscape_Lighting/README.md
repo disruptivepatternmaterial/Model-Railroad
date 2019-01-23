@@ -9,3 +9,5 @@ JSON
 {"type":"lighting","data":{"name":"hut","mode":"fireplace","state":1,"bright":255}}
 
 THIS IS VERY ALPHA, DOESNOT PROPERLY GIVE CREDIT and IS NOT where I intend to take this in the end, I just hacked it together last night.
+
+hardware: 8 LED pixel neopixel and ESP8266
